@@ -55,61 +55,57 @@ export default function ServicesHero() {
   ];
 
   useEffect(() => {
+    // Ensure elements exist before animating
+    if (!heroRef.current || !titleRef.current || !subtitleRef.current || !cardsRef.current || !ctaRef.current) {
+      return;
+    }
+
     const hero = heroRef.current;
     const title = titleRef.current;
     const subtitle = subtitleRef.current;
     const cards = cardsRef.current;
     const cta = ctaRef.current;
 
+    // Kill any existing animations first
+    gsap.killTweensOf([title, subtitle, cards.children, cta, '.floating-element']);
+
+    // Set initial states
+    gsap.set([title, subtitle, cta], { y: 100, opacity: 0 });
+    gsap.set(cards.children, { y: 80, opacity: 0, scale: 0.8 });
+
+    // Create timeline for better control
+    const tl = gsap.timeline({ delay: 0.2 });
+
     // Title animation
-    gsap.fromTo(title,
-      { y: 100, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        ease: 'power3.out',
-        delay: 0.2
-      }
-    );
-
+    tl.to(title, {
+      y: 0,
+      opacity: 1,
+      duration: 1.2,
+      ease: 'power3.out'
+    })
     // Subtitle animation
-    gsap.fromTo(subtitle,
-      { y: 50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: 'power3.out',
-        delay: 0.5
-      }
-    );
-
+    .to(subtitle, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: 'power3.out'
+    }, '-=0.8')
     // Cards animation
-    gsap.fromTo(cards.children,
-      { y: 80, opacity: 0, scale: 0.8 },
-      {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'back.out(1.7)',
-        delay: 0.8
-      }
-    );
-
+    .to(cards.children, {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: 'back.out(1.7)'
+    }, '-=0.5')
     // CTA animation
-    gsap.fromTo(cta,
-      { y: 30, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: 'power3.out',
-        delay: 1.2
-      }
-    );
+    .to(cta, {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      ease: 'power3.out'
+    }, '-=0.4');
 
     // Floating animation for background elements
     gsap.to('.floating-element', {
@@ -122,6 +118,9 @@ export default function ServicesHero() {
     });
 
     return () => {
+      // Clean up all animations
+      tl.kill();
+      gsap.killTweensOf([title, subtitle, cards.children, cta, '.floating-element']);
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   }, []);

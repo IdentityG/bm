@@ -142,45 +142,62 @@ export default function ServiceCategories() {
   ];
 
   useEffect(() => {
+    // Ensure elements exist before animating
+    if (!sectionRef.current || !titleRef.current || !categoriesRef.current) {
+      return;
+    }
+
     const section = sectionRef.current;
     const title = titleRef.current;
     const categories = categoriesRef.current;
 
-    // Title animation
-    gsap.fromTo(title,
-      { y: 100, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        }
+    // Kill existing ScrollTriggers for this component
+    ScrollTrigger.getAll().forEach(trigger => {
+      if (trigger.trigger === section || trigger.trigger === categories) {
+        trigger.kill();
       }
-    );
+    });
+
+    // Set initial states
+    gsap.set(title, { y: 100, opacity: 0 });
+    gsap.set(categories.children, { y: 80, opacity: 0 });
+
+    // Title animation
+    gsap.to(title, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+        id: 'serviceCategories-title'
+      }
+    });
 
     // Categories animation
-    gsap.fromTo(categories.children,
-      { y: 80, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: categories,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
+    gsap.to(categories.children, {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: categories,
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+        id: 'serviceCategories-items'
       }
-    );
+    });
 
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // Clean up only this component's ScrollTriggers
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.vars.id && (trigger.vars.id.includes('serviceCategories'))) {
+          trigger.kill();
+        }
+      });
     };
   }, []);
 

@@ -214,63 +214,79 @@ export default function ProjectGallery() {
   });
 
   useEffect(() => {
+    // Ensure elements exist before animating
+    if (!sectionRef.current || !titleRef.current || !filtersRef.current || !galleryRef.current) {
+      return;
+    }
+
     const section = sectionRef.current;
     const title = titleRef.current;
     const filters = filtersRef.current;
     const gallery = galleryRef.current;
 
-    // Title animation
-    gsap.fromTo(title,
-      { y: 100, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        }
+    // Kill existing ScrollTriggers for this component
+    ScrollTrigger.getAll().forEach(trigger => {
+      if (trigger.trigger === section || trigger.trigger === filters || trigger.trigger === gallery) {
+        trigger.kill();
       }
-    );
+    });
+
+    // Set initial states
+    gsap.set(title, { y: 100, opacity: 0 });
+    gsap.set(filters, { y: 50, opacity: 0 });
+    gsap.set(gallery.children, { y: 80, opacity: 0, scale: 0.8 });
+
+    // Title animation
+    gsap.to(title, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+        id: 'projectGallery-title'
+      }
+    });
 
     // Filters animation
-    gsap.fromTo(filters,
-      { y: 50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: filters,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
+    gsap.to(filters, {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: filters,
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+        id: 'projectGallery-filters'
       }
-    );
+    });
 
     // Gallery items animation
-    gsap.fromTo(gallery.children,
-      { y: 80, opacity: 0, scale: 0.8 },
-      {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: 'back.out(1.7)',
-        scrollTrigger: {
-          trigger: gallery,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
+    gsap.to(gallery.children, {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: 'back.out(1.7)',
+      scrollTrigger: {
+        trigger: gallery,
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+        id: 'projectGallery-items'
       }
-    );
+    });
 
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // Clean up only this component's ScrollTriggers
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.vars.id && trigger.vars.id.includes('projectGallery')) {
+          trigger.kill();
+        }
+      });
     };
   }, [filteredProjects]);
 

@@ -68,62 +68,59 @@ export default function ProjectsHero() {
   ];
 
   useEffect(() => {
+    // Ensure elements exist before animating
+    if (!heroRef.current || !titleRef.current || !subtitleRef.current || !statsRef.current || !categoriesRef.current) {
+      return;
+    }
+
     const hero = heroRef.current;
     const title = titleRef.current;
     const subtitle = subtitleRef.current;
     const stats = statsRef.current;
     const categories = categoriesRef.current;
 
+    // Kill any existing animations first
+    gsap.killTweensOf([title, subtitle, stats.children, categories.children, '.floating-element']);
+
+    // Set initial states
+    gsap.set([title, subtitle], { y: 100, opacity: 0 });
+    gsap.set(stats.children, { y: 80, opacity: 0, scale: 0.8 });
+    gsap.set(categories.children, { y: 60, opacity: 0 });
+
+    // Create timeline for better control
+    const tl = gsap.timeline({ delay: 0.2 });
+
     // Title animation
-    gsap.fromTo(title,
-      { y: 100, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        ease: 'power3.out',
-        delay: 0.2
-      }
-    );
-
+    tl.to(title, {
+      y: 0,
+      opacity: 1,
+      duration: 1.2,
+      ease: 'power3.out'
+    })
     // Subtitle animation
-    gsap.fromTo(subtitle,
-      { y: 50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: 'power3.out',
-        delay: 0.5
-      }
-    );
-
+    .to(subtitle, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: 'power3.out'
+    }, '-=0.8')
     // Stats animation
-    gsap.fromTo(stats.children,
-      { y: 80, opacity: 0, scale: 0.8 },
-      {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'back.out(1.7)',
-        delay: 0.8
-      }
-    );
-
+    .to(stats.children, {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: 'back.out(1.7)'
+    }, '-=0.5')
     // Categories animation
-    gsap.fromTo(categories.children,
-      { y: 60, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: 'power3.out',
-        delay: 1.2
-      }
-    );
+    .to(categories.children, {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      stagger: 0.1,
+      ease: 'power3.out'
+    }, '-=0.4');
 
     // Floating animation for background elements
     gsap.to('.floating-element', {
@@ -136,6 +133,9 @@ export default function ProjectsHero() {
     });
 
     return () => {
+      // Clean up all animations
+      tl.kill();
+      gsap.killTweensOf([title, subtitle, stats.children, categories.children, '.floating-element']);
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   }, []);

@@ -168,64 +168,80 @@ export default function ServiceGuarantees() {
   ];
 
   useEffect(() => {
+    // Ensure elements exist before animating
+    if (!sectionRef.current || !titleRef.current || !guaranteesRef.current || !supportRef.current) {
+      return;
+    }
+
     const section = sectionRef.current;
     const title = titleRef.current;
     const guarantees = guaranteesRef.current;
     const support = supportRef.current;
 
-    // Title animation
-    gsap.fromTo(title,
-      { y: 100, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        }
+    // Kill existing ScrollTriggers for this component
+    ScrollTrigger.getAll().forEach(trigger => {
+      if (trigger.trigger === section || trigger.trigger === guarantees || trigger.trigger === support) {
+        trigger.kill();
       }
-    );
+    });
+
+    // Set initial states
+    gsap.set(title, { y: 100, opacity: 0 });
+    gsap.set(guarantees.children, { y: 80, opacity: 0 });
+    gsap.set(support.children, { y: 50, opacity: 0, scale: 0.9 });
+
+    // Title animation
+    gsap.to(title, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+        id: 'serviceGuarantees-title'
+      }
+    });
 
     // Guarantees animation
-    gsap.fromTo(guarantees.children,
-      { y: 80, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: guarantees,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
+    gsap.to(guarantees.children, {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: guarantees,
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+        id: 'serviceGuarantees-items'
       }
-    );
+    });
 
     // Support tiers animation
-    gsap.fromTo(support.children,
-      { y: 50, opacity: 0, scale: 0.9 },
-      {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 0.6,
-        stagger: 0.15,
-        ease: 'back.out(1.7)',
-        scrollTrigger: {
-          trigger: support,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
+    gsap.to(support.children, {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      duration: 0.6,
+      stagger: 0.15,
+      ease: 'back.out(1.7)',
+      scrollTrigger: {
+        trigger: support,
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+        id: 'serviceGuarantees-support'
       }
-    );
+    });
 
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // Clean up only this component's ScrollTriggers
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.vars.id && trigger.vars.id.includes('serviceGuarantees')) {
+          trigger.kill();
+        }
+      });
     };
   }, []);
 

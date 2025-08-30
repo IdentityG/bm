@@ -215,46 +215,62 @@ export default function TechnicalSpecifications() {
   ];
 
   useEffect(() => {
+    // Ensure elements exist before animating
+    if (!sectionRef.current || !titleRef.current || !tabsRef.current) {
+      return;
+    }
+
     const section = sectionRef.current;
     const title = titleRef.current;
     const tabs = tabsRef.current;
-    const content = contentRef.current;
+
+    // Kill existing ScrollTriggers for this component
+    ScrollTrigger.getAll().forEach(trigger => {
+      if (trigger.trigger === section || trigger.trigger === tabs) {
+        trigger.kill();
+      }
+    });
+
+    // Set initial states
+    gsap.set(title, { y: 100, opacity: 0 });
+    gsap.set(tabs.children, { y: 50, opacity: 0 });
 
     // Title animation
-    gsap.fromTo(title,
-      { y: 100, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        }
+    gsap.to(title, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+        id: 'techSpecs-title'
       }
-    );
+    });
 
     // Tabs animation
-    gsap.fromTo(tabs.children,
-      { y: 50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: tabs,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
+    gsap.to(tabs.children, {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: tabs,
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+        id: 'techSpecs-tabs'
       }
-    );
+    });
 
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // Clean up only this component's ScrollTriggers
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.vars.id && trigger.vars.id.includes('techSpecs')) {
+          trigger.kill();
+        }
+      });
     };
   }, []);
 

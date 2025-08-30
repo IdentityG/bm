@@ -146,44 +146,61 @@ export default function CaseStudies() {
   ];
 
   useEffect(() => {
+    // Ensure elements exist before animating
+    if (!sectionRef.current || !titleRef.current || !studiesRef.current) {
+      return;
+    }
+
     const section = sectionRef.current;
     const title = titleRef.current;
     const studies = studiesRef.current;
 
-    // Title animation
-    gsap.fromTo(title,
-      { y: 100, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        }
+    // Kill existing ScrollTriggers for this component
+    ScrollTrigger.getAll().forEach(trigger => {
+      if (trigger.trigger === section || trigger.trigger === studies) {
+        trigger.kill();
       }
-    );
+    });
+
+    // Set initial states
+    gsap.set(title, { y: 100, opacity: 0 });
+    gsap.set(studies, { y: 80, opacity: 0 });
+
+    // Title animation
+    gsap.to(title, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+        id: 'caseStudies-title'
+      }
+    });
 
     // Studies animation
-    gsap.fromTo(studies,
-      { y: 80, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: studies,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
+    gsap.to(studies, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: studies,
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+        id: 'caseStudies-content'
       }
-    );
+    });
 
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // Clean up only this component's ScrollTriggers
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.vars.id && trigger.vars.id.includes('caseStudies')) {
+          trigger.kill();
+        }
+      });
     };
   }, []);
 
