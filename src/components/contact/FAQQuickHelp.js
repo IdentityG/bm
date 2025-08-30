@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion } from 'framer-motion';
-import { 
+import {
   FaQuestionCircle,
   FaSearch,
   FaChevronDown,
@@ -15,7 +15,8 @@ import {
   FaHeadset,
   FaPhone,
   FaEnvelope,
-  FaComments
+  FaComments,
+  FaArrowRight
 } from 'react-icons/fa';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -193,7 +194,7 @@ export default function FAQQuickHelp() {
             </span>
           </h2>
           <p className="text-xl text-[#64748B] max-w-3xl mx-auto font-inter">
-            Find instant answers to common questions or access our self-service resources 
+            Find instant answers to common questions or access our self-service resources
             for immediate assistance with your electro-mechanical needs.
           </p>
         </div>
@@ -236,11 +237,10 @@ export default function FAQQuickHelp() {
                         )}
                       </div>
                     </button>
-                    
+
                     <div
-                      className={`overflow-hidden transition-all duration-300 ${
-                        activeIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                      }`}
+                      className={`overflow-hidden transition-all duration-300 ${activeIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                        }`}
                     >
                       <div className="px-6 pb-6">
                         <p className="text-[#64748B] font-inter leading-relaxed">
@@ -269,7 +269,7 @@ export default function FAQQuickHelp() {
             <h3 className="text-2xl font-bold text-[#1A2332] mb-8 font-poppins">
               Quick Help Resources
             </h3>
-            
+
             <div ref={resourcesRef} className="space-y-6">
               {quickHelpResources.map((resource, index) => (
                 <motion.div
@@ -306,7 +306,7 @@ export default function FAQQuickHelp() {
               <p className="text-[#64748B] mb-6 font-inter">
                 Our support team is ready to assist you with personalized help.
               </p>
-              
+
               <div className="space-y-3">
                 <motion.a
                   href="tel:+251112344567"

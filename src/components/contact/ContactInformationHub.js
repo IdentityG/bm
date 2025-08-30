@@ -234,7 +234,7 @@ export default function ContactInformationHub() {
           </h2>
           <p className="text-xl text-[#64748B] max-w-3xl mx-auto font-inter">
             Multiple ways to reach us. Choose the method that works best for you,
-            and we'll respond promptly to assist with your needs.
+            and we&apos;ll respond promptly to assist with your needs.
           </p>
         </div>
 

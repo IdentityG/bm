@@ -189,7 +189,7 @@ export default function ContactHero() {
             {/* Subtitle */}
             <div ref={subtitleRef} className="mb-12">
               <p className="text-xl md:text-2xl text-[#64748B] max-w-4xl mx-auto font-inter leading-relaxed">
-                Ready to start your next electro-mechanical project? We're here to help. 
+                Ready to start your next electro-mechanical project? We&apos;re here to help. 
                 Choose your preferred way to connect with our expert team.
               </p>
             </div>

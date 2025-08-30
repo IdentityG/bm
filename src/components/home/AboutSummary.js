@@ -76,7 +76,7 @@ const AboutSummary = () => {
       return () => {
         gsap.killTweensOf(counter);
       };
-    }, [isInView, value, index, hasAnimated]);
+    }, [value, index, hasAnimated]); // Removed isInView from dependencies
 
     return (
       <>
@@ -108,11 +108,14 @@ const AboutSummary = () => {
       }
     );
 
-    observer.observe(statsContainerRef.current);
+    const currentStatsContainer = statsContainerRef.current;
+    if (currentStatsContainer) {
+      observer.observe(currentStatsContainer);
+    }
 
     return () => {
-      if (statsContainerRef.current) {
-        observer.unobserve(statsContainerRef.current);
+      if (currentStatsContainer) {
+        observer.unobserve(currentStatsContainer);
       }
     };
   }, [isInView]);
@@ -151,10 +154,13 @@ const AboutSummary = () => {
     return () => {
       ctx.revert();
       // Clean up background animations
-      gsap.killTweensOf(sectionRef.current);
-      const serviceCards = sectionRef.current?.querySelectorAll('.service-card');
-      if (serviceCards) {
-        gsap.killTweensOf(serviceCards);
+      const currentSection = sectionRef.current;
+      if (currentSection) {
+        gsap.killTweensOf(currentSection);
+        const serviceCards = currentSection.querySelectorAll('.service-card');
+        if (serviceCards) {
+          gsap.killTweensOf(serviceCards);
+        }
       }
     };
   }, []);
