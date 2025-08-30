@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {
   FaCalendarAlt,
   FaRocket,
   FaAward,
@@ -197,7 +197,7 @@ export default function CompanyStory() {
             </span>
           </h2>
           <p className="text-xl text-[#64748B] max-w-3xl mx-auto font-inter">
-            From humble beginnings to industry leadership - discover the journey that shaped 
+            From humble beginnings to industry leadership - discover the journey that shaped
             B&M Electro-Mechanical into Ethiopia's premier electro-mechanical solutions provider.
           </p>
         </div>
@@ -210,11 +210,10 @@ export default function CompanyStory() {
               <motion.button
                 key={index}
                 onClick={() => setActiveYear(index)}
-                className={`flex-shrink-0 flex items-center gap-3 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
-                  activeYear === index
+                className={`flex-shrink-0 flex items-center gap-3 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${activeYear === index
                     ? 'bg-gradient-to-r from-[#0066FF] to-[#00D4FF] text-white shadow-lg'
                     : 'bg-white text-[#64748B] border border-[#0066FF]/20 hover:bg-[#F8FAFC] hover:text-[#0066FF]'
-                }`}
+                  }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -270,14 +269,14 @@ export default function CompanyStory() {
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-black/30"></div>
-                    
+
                     {/* Year Badge */}
                     <div className="absolute top-6 left-6">
                       <div className={`w-16 h-16 ${currentMilestone.color === 'text-[#0066FF]' ? 'bg-[#0066FF]' :
                         currentMilestone.color === 'text-[#10B981]' ? 'bg-[#10B981]' :
-                        currentMilestone.color === 'text-[#FF6B35]' ? 'bg-[#FF6B35]' :
-                        currentMilestone.color === 'text-[#8B5CF6]' ? 'bg-[#8B5CF6]' : 'bg-[#00D4FF]'
-                      } rounded-xl flex items-center justify-center shadow-lg`}>
+                          currentMilestone.color === 'text-[#FF6B35]' ? 'bg-[#FF6B35]' :
+                            currentMilestone.color === 'text-[#8B5CF6]' ? 'bg-[#8B5CF6]' : 'bg-[#00D4FF]'
+                        } rounded-xl flex items-center justify-center shadow-lg`}>
                         <currentMilestone.icon className="w-8 h-8 text-white" />
                       </div>
                     </div>
@@ -309,9 +308,9 @@ export default function CompanyStory() {
                           >
                             <div className={`w-6 h-6 ${currentMilestone.color === 'text-[#0066FF]' ? 'bg-[#0066FF]' :
                               currentMilestone.color === 'text-[#10B981]' ? 'bg-[#10B981]' :
-                              currentMilestone.color === 'text-[#FF6B35]' ? 'bg-[#FF6B35]' :
-                              currentMilestone.color === 'text-[#8B5CF6]' ? 'bg-[#8B5CF6]' : 'bg-[#00D4FF]'
-                            } rounded-full flex items-center justify-center flex-shrink-0`}>
+                                currentMilestone.color === 'text-[#FF6B35]' ? 'bg-[#FF6B35]' :
+                                  currentMilestone.color === 'text-[#8B5CF6]' ? 'bg-[#8B5CF6]' : 'bg-[#00D4FF]'
+                              } rounded-full flex items-center justify-center flex-shrink-0`}>
                               <FaAward className="w-3 h-3 text-white" />
                             </div>
                             <span className="text-[#64748B] font-inter">{achievement}</span>
@@ -364,7 +363,7 @@ export default function CompanyStory() {
 
           {/* Background pattern */}
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0" 
+            <div className="absolute inset-0"
               style={{
                 backgroundImage: `radial-gradient(circle at 30% 50%, rgba(0, 212, 255, 0.3) 0%, transparent 50%),
                                  radial-gradient(circle at 70% 50%, rgba(0, 102, 255, 0.3) 0%, transparent 50%)`

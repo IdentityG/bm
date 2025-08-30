@@ -135,62 +135,78 @@ export default function ProjectRequest() {
   ];
 
   useEffect(() => {
+    // Ensure elements exist before animating
+    if (!sectionRef.current || !titleRef.current || !formRef.current || !benefitsRef.current) {
+      return;
+    }
+
     const section = sectionRef.current;
     const title = titleRef.current;
     const form = formRef.current;
     const benefits = benefitsRef.current;
 
-    // Title animation
-    gsap.fromTo(title,
-      { y: 100, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        }
+    // Kill existing ScrollTriggers for this component
+    ScrollTrigger.getAll().forEach(trigger => {
+      if (trigger.trigger === section || trigger.trigger === form || trigger.trigger === benefits) {
+        trigger.kill();
       }
-    );
+    });
+
+    // Set initial states
+    gsap.set(title, { y: 100, opacity: 0 });
+    gsap.set(form, { x: -100, opacity: 0 });
+    gsap.set(benefits.children, { x: 100, opacity: 0 });
+
+    // Title animation
+    gsap.to(title, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+        id: 'projectRequest-title'
+      }
+    });
 
     // Form animation
-    gsap.fromTo(form,
-      { x: -100, opacity: 0 },
-      {
-        x: 0,
-        opacity: 1,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: form,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
+    gsap.to(form, {
+      x: 0,
+      opacity: 1,
+      duration: 1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: form,
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+        id: 'projectRequest-form'
       }
-    );
+    });
 
     // Benefits animation
-    gsap.fromTo(benefits.children,
-      { x: 100, opacity: 0 },
-      {
-        x: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: benefits,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
+    gsap.to(benefits.children, {
+      x: 0,
+      opacity: 1,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: benefits,
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+        id: 'projectRequest-benefits'
       }
-    );
+    });
 
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // Clean up only this component's ScrollTriggers
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.vars.id && trigger.vars.id.includes('projectRequest')) {
+          trigger.kill();
+        }
+      });
     };
   }, []);
 

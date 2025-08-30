@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {
   FaBuilding,
   FaTools,
   FaCog,
@@ -200,8 +200,9 @@ export default function FacilitiesCapabilities() {
         'Nationwide Coverage'
       ]
     }
-  ];  const fa
-cilityStats = [
+  ];
+
+  const facilityStats = [
     { number: '8,300', label: 'Total Facility Area (m²)', icon: FaBuilding },
     { number: '4', label: 'Major Facilities', icon: FaWarehouse },
     { number: '50+', label: 'Advanced Equipment', icon: FaTools },
@@ -289,7 +290,7 @@ cilityStats = [
             </span>
           </h2>
           <p className="text-xl text-[#64748B] max-w-3xl mx-auto font-inter">
-            State-of-the-art facilities and advanced capabilities that enable us to deliver 
+            State-of-the-art facilities and advanced capabilities that enable us to deliver
             world-class electro-mechanical solutions across all project scales.
           </p>
         </div>
@@ -321,11 +322,10 @@ cilityStats = [
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                activeTab === tab.id
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${activeTab === tab.id
                   ? 'bg-[#0066FF] text-white shadow-lg'
                   : 'bg-white text-[#64748B] border border-[#0066FF]/10 hover:border-[#0066FF]/30'
-              }`}
+                }`}
             >
               <tab.icon className="w-4 h-4" />
               {tab.label}
@@ -358,9 +358,8 @@ cilityStats = [
                       {currentFacility.images.map((_, index) => (
                         <div
                           key={index}
-                          className={`w-2 h-2 rounded-full ${
-                            index === 0 ? 'bg-white' : 'bg-white/50'
-                          }`}
+                          className={`w-2 h-2 rounded-full ${index === 0 ? 'bg-white' : 'bg-white/50'
+                            }`}
                         ></div>
                       ))}
                     </div>
@@ -376,11 +375,11 @@ cilityStats = [
                     <FaMapMarkerAlt className="w-4 h-4 text-[#0066FF]" />
                     <span className="text-[#64748B] text-sm font-inter">{currentFacility.location}</span>
                   </div>
-                  
+
                   <h3 className="text-2xl font-bold text-[#1A2332] mb-4 font-poppins">
                     {currentFacility.title}
                   </h3>
-                  
+
                   <p className="text-[#64748B] mb-6 font-inter">
                     {currentFacility.description}
                   </p>
@@ -439,7 +438,7 @@ cilityStats = [
           <h3 className="text-3xl font-bold text-[#1A2332] text-center mb-12 font-poppins">
             Technical Capabilities
           </h3>
-          
+
           <div ref={capabilitiesRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {capabilities.map((capability, index) => (
               <motion.div
@@ -450,11 +449,11 @@ cilityStats = [
                 <div className={`w-12 h-12 ${capability.bgColor} rounded-xl flex items-center justify-center mb-4`}>
                   <capability.icon className={`w-6 h-6 ${capability.color}`} />
                 </div>
-                
+
                 <h4 className="text-lg font-bold text-[#1A2332] mb-4 font-poppins">
                   {capability.category}
                 </h4>
-                
+
                 <ul className="space-y-2">
                   {capability.capabilities.map((item, itemIndex) => (
                     <li key={itemIndex} className="text-[#64748B] text-sm flex items-center gap-2 font-inter">
@@ -475,7 +474,7 @@ cilityStats = [
               Experience Our Facilities
             </h3>
             <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto font-inter">
-              Schedule a visit to see our state-of-the-art facilities and learn how our 
+              Schedule a visit to see our state-of-the-art facilities and learn how our
               capabilities can support your next project.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
@@ -500,7 +499,7 @@ cilityStats = [
 
           {/* Background pattern */}
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0" 
+            <div className="absolute inset-0"
               style={{
                 backgroundImage: `radial-gradient(circle at 30% 50%, rgba(255, 107, 53, 0.3) 0%, transparent 50%),
                                  radial-gradient(circle at 70% 50%, rgba(0, 102, 255, 0.3) 0%, transparent 50%)`

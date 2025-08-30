@@ -92,55 +92,70 @@ const ServicesOverview = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    // Ensure elements exist before animating
+    if (!sectionRef.current || !titleRef.current) {
+      return;
+    }
+
     const ctx = gsap.context(() => {
-      // Smooth title reveal
-      gsap.fromTo(titleRef.current,
-        {
-          opacity: 0,
-          y: 30,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: titleRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse'
-          }
+      // Kill existing ScrollTriggers for this component
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.trigger === titleRef.current || 
+            cardsRef.current.some(card => card && trigger.trigger === card)) {
+          trigger.kill();
         }
-      );
+      });
+
+      // Set initial states
+      gsap.set(titleRef.current, { opacity: 0, y: 30 });
+
+      // Smooth title reveal
+      gsap.to(titleRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: titleRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+          id: 'servicesOverview-title'
+        }
+      });
 
       // Staggered cards entrance
       cardsRef.current.forEach((card, index) => {
         if (!card) return;
 
-        gsap.fromTo(card,
-          {
-            opacity: 0,
-            y: 40,
-            scale: 0.95
-          },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.8,
-            delay: index * 0.1,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 85%',
-              toggleActions: 'play none none reverse'
-            }
+        gsap.set(card, { opacity: 0, y: 40, scale: 0.95 });
+
+        gsap.to(card, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.8,
+          delay: index * 0.1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+            id: `servicesOverview-card-${index}`
           }
-        );
+        });
       });
 
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      // Clean up only this component's ScrollTriggers
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.vars.id && trigger.vars.id.includes('servicesOverview')) {
+          trigger.kill();
+        }
+      });
+    };
   }, []);
 
   // Subtle mouse tracking

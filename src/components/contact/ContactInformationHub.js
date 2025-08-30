@@ -29,7 +29,6 @@ gsap.registerPlugin(ScrollTrigger);
 export default function ContactInformationHub() {
   const sectionRef = useRef(null);
   const titleRef = useRef(null);
-  const contactCardsRef = useRef(null);
   const departmentsRef = useRef(null);
   const [activeContact, setActiveContact] = useState('main');
 
@@ -155,64 +154,63 @@ export default function ContactInformationHub() {
   ];
 
   useEffect(() => {
+    // Ensure elements exist before animating
+    if (!sectionRef.current || !titleRef.current || !departmentsRef.current) {
+      return;
+    }
+
     const section = sectionRef.current;
     const title = titleRef.current;
-    const contactCards = contactCardsRef.current;
     const departments = departmentsRef.current;
 
-    // Title animation
-    gsap.fromTo(title,
-      { y: 100, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        }
+    // Kill existing ScrollTriggers for this component
+    ScrollTrigger.getAll().forEach(trigger => {
+      if (trigger.trigger === section || trigger.trigger === departments) {
+        trigger.kill();
       }
-    );
+    });
 
-    // Contact cards animation
-    gsap.fromTo(contactCards.children,
-      { x: -100, opacity: 0 },
-      {
-        x: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: contactCards,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
+    // Set initial states
+    gsap.set(title, { y: 100, opacity: 0 });
+    gsap.set(departments.children, { y: 80, opacity: 0, scale: 0.8 });
+
+    // Title animation
+    gsap.to(title, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+        id: 'contactHub-title'
       }
-    );
+    });
 
     // Departments animation
-    gsap.fromTo(departments.children,
-      { y: 80, opacity: 0, scale: 0.8 },
-      {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'back.out(1.7)',
-        scrollTrigger: {
-          trigger: departments,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
+    gsap.to(departments.children, {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: 'back.out(1.7)',
+      scrollTrigger: {
+        trigger: departments,
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+        id: 'contactHub-departments'
       }
-    );
+    });
 
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // Clean up only this component's ScrollTriggers
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.vars.id && trigger.vars.id.includes('contactHub')) {
+          trigger.kill();
+        }
+      });
     };
   }, []);
 
@@ -394,7 +392,7 @@ export default function ContactInformationHub() {
           </div>
 
           <div ref={departmentsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {departments.map((dept, index) => (
+            {departments.map((dept) => (
               <motion.div
                 key={dept.id}
                 className="bg-white rounded-2xl border border-[#0066FF]/10 p-6 hover:shadow-xl transition-all duration-300"

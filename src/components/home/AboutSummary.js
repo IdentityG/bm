@@ -122,6 +122,9 @@ const AboutSummary = () => {
     if (!sectionRef.current) return;
 
     const ctx = gsap.context(() => {
+      // Kill any existing background animations
+      gsap.killTweensOf(sectionRef.current);
+      
       // Background animation
       gsap.to(sectionRef.current, {
         backgroundPosition: '200% center',
@@ -133,6 +136,7 @@ const AboutSummary = () => {
       // Service cards floating animation
       const serviceCards = sectionRef.current.querySelectorAll('.service-card');
       if (serviceCards.length > 0) {
+        gsap.killTweensOf(serviceCards);
         gsap.to(serviceCards, {
           y: -5,
           duration: 2,
@@ -144,7 +148,15 @@ const AboutSummary = () => {
       }
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      // Clean up background animations
+      gsap.killTweensOf(sectionRef.current);
+      const serviceCards = sectionRef.current?.querySelectorAll('.service-card');
+      if (serviceCards) {
+        gsap.killTweensOf(serviceCards);
+      }
+    };
   }, []);
 
   return (

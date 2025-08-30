@@ -8,10 +8,10 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
 import { MdDarkMode, MdLightMode } from 'react-icons/md';
-import { 
-  FaTwitter, 
-  FaLinkedin, 
-  FaFacebook, 
+import {
+  FaTwitter,
+  FaLinkedin,
+  FaFacebook,
   FaInstagram,
   FaPhone,
   FaEnvelope
@@ -28,19 +28,19 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  
+
   const navRef = useRef(null);
   const logoRef = useRef(null);
   const linksRef = useRef([]);
   const ctaRef = useRef(null);
-  
+
   const pathname = usePathname();
 
   // Navigation items with dropdowns
   const navItems = [
     { name: 'Home', href: '/', hasDropdown: false },
-    { 
-      name: 'Services', 
+    {
+      name: 'Services',
       href: '/services',
       hasDropdown: true,
       dropdownItems: [
@@ -54,7 +54,6 @@ const Navbar = () => {
     },
     { name: 'Projects', href: '/projects', hasDropdown: false },
     { name: 'About Us', href: '/about', hasDropdown: false },
-    { name: 'Blog', href: '/blog', hasDropdown: false },
     { name: 'Contact', href: '/contact', hasDropdown: false }
   ];
 
@@ -81,67 +80,84 @@ const Navbar = () => {
 
   // GSAP Animations
   useEffect(() => {
+    // Ensure elements exist before animating
+    if (!navRef.current || !logoRef.current || !ctaRef.current) {
+      return;
+    }
+
     const ctx = gsap.context(() => {
+      // Kill any existing animations first
+      gsap.killTweensOf([logoRef.current, ...linksRef.current.filter(Boolean), ctaRef.current]);
+
+      // Kill existing ScrollTriggers for navbar
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.trigger === document.body || trigger.vars.id === 'navbar-scroll') {
+          trigger.kill();
+        }
+      });
+
       // Initial page load animations
-      gsap.set([logoRef.current, ...linksRef.current, ctaRef.current], {
+      gsap.set([logoRef.current, ...linksRef.current.filter(Boolean), ctaRef.current], {
         y: -20,
         opacity: 0
       });
 
-      gsap.to(logoRef.current, {
+      // Create timeline for better control
+      const tl = gsap.timeline();
+
+      tl.to(logoRef.current, {
         y: 0,
         opacity: 1,
         duration: 0.6,
         ease: 'back.out(1.7)'
-      });
-
-      gsap.to(linksRef.current, {
-        y: 0,
-        opacity: 1,
-        duration: 0.5,
-        stagger: 0.1,
-        delay: 0.2,
-        ease: 'power2.out'
-      });
-
-      gsap.to(ctaRef.current, {
-        y: 0,
-        opacity: 1,
-        duration: 0.5,
-        delay: 0.6,
-        ease: 'power2.out'
-      });
+      })
+        .to(linksRef.current.filter(Boolean), {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: 'power2.out'
+        }, '-=0.4')
+        .to(ctaRef.current, {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          ease: 'power2.out'
+        }, '-=0.3');
 
       // Scroll-triggered navbar background change with refresh handling
       ScrollTrigger.create({
         trigger: 'body',
         start: 'top -50px',
         end: 'bottom -10px',
+        id: 'navbar-scroll',
         onToggle: (self) => {
           const scrolled = window.scrollY > 50;
           setIsScrolled(scrolled);
-          
-          if (self.isActive || scrolled) {
-            gsap.to(navRef.current, {
-              backgroundColor: 'rgba(0, 102, 255, 0.95)',
-              backdropFilter: 'blur(20px)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-              duration: 0.3
-            });
-          } else {
-            gsap.to(navRef.current, {
-              backgroundColor: 'transparent',
-              backdropFilter: 'blur(0px)',
-              boxShadow: '0 0 0 rgba(0, 0, 0, 0)',
-              duration: 0.3
-            });
+
+          if (navRef.current) {
+            if (self.isActive || scrolled) {
+              gsap.to(navRef.current, {
+                backgroundColor: 'rgba(0, 102, 255, 0.95)',
+                backdropFilter: 'blur(20px)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                duration: 0.3
+              });
+            } else {
+              gsap.to(navRef.current, {
+                backgroundColor: 'transparent',
+                backdropFilter: 'blur(0px)',
+                boxShadow: '0 0 0 rgba(0, 0, 0, 0)',
+                duration: 0.3
+              });
+            }
           }
         },
         onRefresh: () => {
           // Handle page refresh/navigation
           const scrolled = window.scrollY > 50;
           setIsScrolled(scrolled);
-          if (scrolled) {
+          if (scrolled && navRef.current) {
             gsap.set(navRef.current, {
               backgroundColor: 'rgba(0, 102, 255, 0.95)',
               backdropFilter: 'blur(20px)',
@@ -153,14 +169,25 @@ const Navbar = () => {
 
     }, navRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      // Clean up ScrollTriggers
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.vars.id === 'navbar-scroll') {
+          trigger.kill();
+        }
+      });
+    };
   }, [pathname]); // Re-run animations when pathname changes
 
   // Hamburger menu animation
   const toggleMenu = () => {
     const newMenuState = !isMenuOpen;
     setIsMenuOpen(newMenuState);
-    
+
+    // Kill any existing hamburger animations first
+    gsap.killTweensOf(['.hamburger-line-1', '.hamburger-line-2', '.hamburger-line-3']);
+
     // GSAP hamburger to X animation with proper state tracking
     if (newMenuState) {
       // Opening menu - show X
@@ -178,7 +205,8 @@ const Navbar = () => {
   // Close mobile menu and reset hamburger animation
   const closeMobileMenu = () => {
     setIsMenuOpen(false);
-    // Reset hamburger animation when closing
+    // Kill existing animations and reset hamburger animation when closing
+    gsap.killTweensOf(['.hamburger-line-1', '.hamburger-line-2', '.hamburger-line-3']);
     gsap.to('.hamburger-line-1', { rotation: 0, y: 0, duration: 0.3 });
     gsap.to('.hamburger-line-2', { opacity: 1, duration: 0.3 });
     gsap.to('.hamburger-line-3', { rotation: 0, y: 0, duration: 0.3 });
@@ -233,18 +261,17 @@ const Navbar = () => {
     <>
       <motion.nav
         ref={navRef}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled 
-            ? 'bg-[#0066FF] backdrop-blur-md shadow-lg border-b border-[#FF6B35]' 
-            : 'bg-transparent'
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+          ? 'bg-[#0066FF] backdrop-blur-md shadow-lg border-b border-[#FF6B35]'
+          : 'bg-transparent'
+          }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            
+
             {/* Logo */}
             <motion.div
               ref={logoRef}
@@ -284,21 +311,19 @@ const Navbar = () => {
                   >
                     <Link
                       href={item.href}
-                      className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-                        pathname === item.href
-                          ? 'text-blue-600 bg-blue-50'
-                          : 'text-white hover:text-blue-600 hover:bg-blue-50'
-                      }`}
+                      className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-300 ${pathname === item.href
+                        ? 'text-blue-600 bg-blue-50'
+                        : 'text-white hover:text-blue-600 hover:bg-blue-50'
+                        }`}
                       onClick={(e) => handleSmoothScroll(e, item.href)}
                     >
                       {item.name}
                       {item.hasDropdown && (
-                        <FiChevronDown className={`ml-1 w-4 h-4 transition-transform duration-200 ${
-                          activeDropdown === item.name ? 'rotate-180' : ''
-                        }`} />
+                        <FiChevronDown className={`ml-1 w-4 h-4 transition-transform duration-200 ${activeDropdown === item.name ? 'rotate-180' : ''
+                          }`} />
                       )}
                     </Link>
-                    
+
                     {/* Active indicator */}
                     {pathname === item.href && (
                       <motion.div
@@ -363,7 +388,7 @@ const Navbar = () => {
                 <FaPhone className="w-4 h-4" />
                 <span className="font-medium">+251-XXX-XXXX</span>
               </div>
-              
+
 
               <motion.div ref={ctaRef}>
                 <Link href="/contact">
@@ -373,7 +398,7 @@ const Navbar = () => {
                       background: 'linear-gradient(135deg, #0066FF, #FF6B35)',
                       color: '#ffffff'
                     }}
-                    whileHover={{ 
+                    whileHover={{
                       scale: 1.05,
                       boxShadow: '0 10px 25px rgba(0, 102, 255, 0.3)'
                     }}
@@ -413,7 +438,7 @@ const Navbar = () => {
               exit={{ opacity: 0 }}
               onClick={closeMobileMenu}
             />
-            
+
             <motion.div
               className="fixed top-0 right-0 h-full w-full max-w-sm bg-white/95 backdrop-blur-md shadow-2xl z-50 lg:hidden"
               variants={mobileMenuVariants}
@@ -454,11 +479,10 @@ const Navbar = () => {
                       >
                         <Link
                           href={item.href}
-                          className={`block py-3 px-4 rounded-lg font-medium transition-colors duration-200 ${
-                            pathname === item.href
-                              ? 'text-blue-600 bg-blue-50'
-                              : 'text-slate-800 hover:text-blue-600 hover:bg-blue-50'
-                          }`}
+                          className={`block py-3 px-4 rounded-lg font-medium transition-colors duration-200 ${pathname === item.href
+                            ? 'text-blue-600 bg-blue-50'
+                            : 'text-slate-800 hover:text-blue-600 hover:bg-blue-50'
+                            }`}
                           onClick={(e) => handleSmoothScroll(e, item.href)}
                         >
                           {item.name}

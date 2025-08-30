@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion } from 'framer-motion';
-import { 
+import {
   FaEye,
   FaBullseye,
   FaHeart,
@@ -124,8 +124,9 @@ export default function CompanyValuesMission() {
         'Long-term relationship building'
       ]
     }
-  ];  co
-nst achievements = [
+  ];
+
+  const achievements = [
     { metric: '500+', label: 'Projects Completed', icon: FaCheckCircle },
     { metric: '15+', label: 'Years of Excellence', icon: FaRocket },
     { metric: '50+', label: 'Expert Team Members', icon: FaUsers },
@@ -211,7 +212,7 @@ nst achievements = [
             </span>
           </h2>
           <p className="text-xl text-[#64748B] max-w-3xl mx-auto font-inter">
-            Our core values and mission statement guide every decision we make and 
+            Our core values and mission statement guide every decision we make and
             every solution we deliver to our valued clients.
           </p>
         </div>
@@ -227,11 +228,11 @@ nst achievements = [
               <div className={`w-16 h-16 ${item.bgColor} rounded-2xl flex items-center justify-center mb-6`}>
                 <item.icon className={`w-8 h-8 ${item.color}`} />
               </div>
-              
+
               <h3 className="text-2xl font-bold text-[#1A2332] mb-4 font-poppins">
                 {item.title}
               </h3>
-              
+
               <p className="text-[#64748B] leading-relaxed font-inter">
                 {item.description}
               </p>
@@ -244,7 +245,7 @@ nst achievements = [
           <h3 className="text-3xl font-bold text-[#1A2332] text-center mb-12 font-poppins">
             Our Core Values
           </h3>
-          
+
           <div ref={valuesRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {coreValues.map((value, index) => (
               <motion.div
@@ -256,11 +257,11 @@ nst achievements = [
                 <div className={`w-12 h-12 ${value.bgColor} rounded-xl flex items-center justify-center mb-4`}>
                   <value.icon className={`w-6 h-6 ${value.color}`} />
                 </div>
-                
+
                 <h4 className="text-lg font-bold text-[#1A2332] mb-2 font-poppins">
                   {value.title}
                 </h4>
-                
+
                 <p className="text-[#64748B] text-sm mb-4 font-inter">
                   {value.description}
                 </p>
@@ -294,7 +295,7 @@ nst achievements = [
             <h3 className="text-3xl font-bold text-white text-center mb-12 font-poppins">
               Our Achievements
             </h3>
-            
+
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
               {achievements.map((achievement, index) => (
                 <motion.div
@@ -331,7 +332,7 @@ nst achievements = [
 
           {/* Background pattern */}
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0" 
+            <div className="absolute inset-0"
               style={{
                 backgroundImage: `radial-gradient(circle at 30% 50%, rgba(255, 107, 53, 0.3) 0%, transparent 50%),
                                  radial-gradient(circle at 70% 50%, rgba(0, 102, 255, 0.3) 0%, transparent 50%)`

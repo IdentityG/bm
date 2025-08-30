@@ -23,11 +23,11 @@ export default function Footer() {
   const bottomRef = useRef(null);
 
   const quickLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'About', href: '#about' },
-    { name: 'Services', href: '#services' },
-    { name: 'Gallery', href: '#gallery' },
-    { name: 'Contact', href: '#contact' }
+    { name: 'Home', href: '/' },
+    { name: 'About', href: '/about' },
+    { name: 'Services', href: '/services' },
+    { name: 'Project', href: '/projects' },
+    { name: 'Contact', href: '/contact' }
   ];
 
   const services = [
@@ -47,45 +47,61 @@ export default function Footer() {
   ];
 
   useEffect(() => {
+    // Ensure elements exist before animating
+    if (!footerRef.current || !contentRef.current || !bottomRef.current) {
+      return;
+    }
+
     const footer = footerRef.current;
     const content = contentRef.current;
     const bottom = bottomRef.current;
 
-    // Main content animation
-    gsap.fromTo(content.children,
-      { y: 50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: footer,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
+    // Kill existing ScrollTriggers and animations for this component
+    ScrollTrigger.getAll().forEach(trigger => {
+      if (trigger.trigger === footer || trigger.trigger === bottom) {
+        trigger.kill();
       }
-    );
+    });
+
+    // Kill any existing social icon animations
+    const socialIcons = footer.querySelectorAll('.social-icon');
+    gsap.killTweensOf(socialIcons);
+    gsap.killTweensOf([content.children, bottom]);
+
+    // Set initial states
+    gsap.set(content.children, { y: 50, opacity: 0 });
+    gsap.set(bottom, { y: 30, opacity: 0 });
+
+    // Main content animation
+    gsap.to(content.children, {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: footer,
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+        id: 'footer-content'
+      }
+    });
 
     // Bottom section animation
-    gsap.fromTo(bottom,
-      { y: 30, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: bottom,
-          start: 'top 90%',
-          toggleActions: 'play none none reverse'
-        }
+    gsap.to(bottom, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: bottom,
+        start: 'top 90%',
+        toggleActions: 'play none none reverse',
+        id: 'footer-bottom'
       }
-    );
+    });
 
-    // Continuous animations
-    const socialIcons = footer.querySelectorAll('.social-icon');
+    // Continuous animations for social icons
     socialIcons.forEach((icon, index) => {
       gsap.to(icon, {
         y: -5,
@@ -98,7 +114,16 @@ export default function Footer() {
     });
 
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // Clean up only this component's ScrollTriggers and animations
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.vars.id && trigger.vars.id.includes('footer')) {
+          trigger.kill();
+        }
+      });
+      
+      // Clean up social icon animations
+      gsap.killTweensOf(socialIcons);
+      gsap.killTweensOf([content.children, bottom]);
     };
   }, []);
 
