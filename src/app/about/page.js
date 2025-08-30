@@ -1,0 +1,26 @@
+'use client';
+
+import { motion } from 'framer-motion';
+
+export default function About() {
+  return (
+    <div className="min-h-screen bg-white pt-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-poppins font-bold text-deep-navy mb-6">
+            About <span className="gradient-text">B&M</span>
+          </h1>
+          <p className="text-xl text-steel-gray max-w-3xl mx-auto">
+            Leading electro-mechanical company in Ethiopia with over a decade of experience 
+            in professional electrical solutions and infrastructure development.
+          </p>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
